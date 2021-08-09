@@ -27,13 +27,13 @@ jobs:
           go-version: 1.16
 
       - name: Build
-        run: go build -v ./cmd/
+        run: make build
 
       - name: Lint
-        uses: Jerome1337/golint-action@v1.0.2
+        run: make lint
 
       - name: Test
-        run: go test -ldflags "-X github.com/couchbase/audit-cleanup/pkg/version.version=1 -X github.com/couchbase/audit-cleanup/pkg/version.revision=2 -X github.com/couchbase/audit-cleanup/pkg/version.buildNumber=3 -X github.com/couchbase/audit-cleanup/pkg/version.gitRevision=456" -timeout 30s -v ./pkg
+        run: make test
 
       - name: Log in to the Container registry
         uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9

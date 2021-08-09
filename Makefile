@@ -44,7 +44,7 @@ dist: image-artifacts
 	tar -C $(ARTIFACTS) -czvf dist/couchbase-audit-cleanup-image_$(productVersion).tgz .
 	rm -rf $(ARTIFACTS)
 
-lint:
+lint: container-lint
 	go run github.com/golangci/golangci-lint/cmd/golangci-lint run ./cmd/... ./pkg/...
 	tools/shellcheck.sh
 	tools/licence-lint.sh
@@ -65,7 +65,7 @@ container: build
 container-rhel: build
 	docker build -f Dockerfile.rhel --build-arg OPERATOR_BUILD=$(OPERATOR_BUILD) --build-arg OS_BUILD=$(BUILD) --build-arg PROD_VERSION=$(version) -t ${DOCKER_USER}/audit-cleanup-rhel:${DOCKER_TAG} .
 
-container-lint: lint
+container-lint:
 	docker run --rm -i hadolint/hadolint < Dockerfile
 	docker run --rm -i hadolint/hadolint < Dockerfile.rhel
 
@@ -99,7 +99,7 @@ container-rhel-checks: container-scan
 	docker save -o image-rhel.tar ${DOCKER_USER}/audit-cleanup-rhel:${DOCKER_TAG}
 	go run github.com/heroku/terrier -cfg terrier.cfg.yml && rm -f image-rhel.tar
 
-test: test-unit container container-rhel container-lint
+test: test-unit container container-rhel container-scan
 
 # This target pushes the containers to a public repository.
 # A typical one liner to deploy to the cloud would be:
