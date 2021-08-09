@@ -26,14 +26,8 @@ jobs:
         with:
           go-version: 1.16
 
-      - name: Build
-        run: make build
-
-      - name: Lint
-        run: make lint
-
-      - name: Test
-        run: make test
+      - name: Build and test
+        run: make
 
       - name: Log in to the Container registry
         uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9

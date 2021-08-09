@@ -17,11 +17,12 @@
 package main
 
 import (
-	"flag"
 	"os"
+	"strings"
 
 	"github.com/couchbase/audit-cleanup/pkg/logging"
 	"github.com/couchbase/audit-cleanup/pkg/version"
+	"github.com/fsnotify/fsnotify"
 )
 
 var (
@@ -31,12 +32,69 @@ var (
 // Create a filesystem watcher that removes rotated audit logs as soon as they are created.
 // Event-driven rather than polling.
 
-func main() {
-	ignoreExisting := flag.Bool("ignoreExisting", true, "Ignore any existing rebalance reports, if false will process then exit")
-	flag.Parse()
+const (
+	LogDirEnvVar = "AUDIT_LOG_DIR"
+)
 
-	log.Infow("Starting up Couchbase Audit Cleanup",
-		"version", version.WithBuildNumber(), "revision", version.GitRevision(),
-		"ignoreExisting", *ignoreExisting, "environment", os.Environ())
+func main() {
+	log.Infow("Starting up Couchbase Audit Cleanup", "version", version.WithBuildNumber(), "revision", version.GitRevision(), "environment", os.Environ())
+
+	watcher, err := fsnotify.NewWatcher()
+	if err != nil {
+		log.Fatalw("Unable to create watcher", "error", err)
+	}
+	defer watcher.Close()
+
+	done := make(chan bool)
+
+	go func() {
+		for {
+			select {
+			case event, ok := <-watcher.Events:
+				if !ok {
+					return
+				}
+
+				if event.Op&fsnotify.Create != fsnotify.Create {
+					log.Debugw("Skipping event as not file creation", "event", event)
+
+					return
+				}
+
+				log.Debugw("File creation event", "event", event, "file", event.Name)
+
+				if strings.HasSuffix(event.Name, "-audit.log") {
+					err := os.Remove(event.Name)
+					if err != nil {
+						log.Errorw("Unable to remove file", "error", err, "event", event, "file", event.Name)
+					} else {
+						log.Infow("Deleted file successfully", "file", event.Name)
+					}
+				}
+
+			case err, ok := <-watcher.Errors:
+				if !ok {
+					return
+				}
+
+				log.Errorw("Error during watch", "error", err)
+			}
+		}
+	}()
+
+	//
+	directoryToWatch := os.Getenv(LogDirEnvVar)
+	if directoryToWatch == "" {
+		directoryToWatch = "/opt/couchbase/var/lib/couchbase/logs/"
+	}
+
+	// Monitor now
+	err = watcher.Add(directoryToWatch)
+	if err != nil {
+		log.Fatalw("Unable to add directory to watcher", "error", err, "dir", directoryToWatch)
+	}
+
+	<-done
+
 	log.Info("Exiting Couchbase Audit Cleanup")
 }

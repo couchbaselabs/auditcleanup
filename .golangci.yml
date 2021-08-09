@@ -28,3 +28,7 @@ linters:
   - gofumpt # as per operator
   - lll # long lines as per operator
   - gochecknoglobals # global variables as per operator (and for logging)
+linters-settings:
+  cyclop:
+    # the maximal code complexity to report
+    max-complexity: 12
