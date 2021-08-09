@@ -82,13 +82,13 @@ func main() {
 		}
 	}()
 
-	//
 	directoryToWatch := os.Getenv(LogDirEnvVar)
 	if directoryToWatch == "" {
 		directoryToWatch = "/opt/couchbase/var/lib/couchbase/logs/"
 	}
 
-	// Monitor now
+	log.Infow("Monitoring directory, override with "+LogDirEnvVar, "dir", directoryToWatch)
+
 	err = watcher.Add(directoryToWatch)
 	if err != nil {
 		log.Fatalw("Unable to add directory to watcher", "error", err, "dir", directoryToWatch)
