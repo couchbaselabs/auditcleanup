@@ -36,5 +36,4 @@ func main() {
 		"version", version.WithBuildNumber(), "revision", version.GitRevision(),
 		"ignoreExisting", *ignoreExisting, "environment", os.Environ())
 	log.Info("Exiting Couchbase Audit Cleanup")
-
 }

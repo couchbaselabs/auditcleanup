@@ -1,11 +1,10 @@
 FROM registry.access.redhat.com/ubi8/ubi-minimal:8.4
 RUN microdnf update && microdnf install -y shadow-utils && microdnf clean all
 # Ensure we add licensing and help information for certification requirements
-COPY licenses/* /licenses/
+COPY LICENSE /licenses/couchbase.txt
 COPY README.md /help.1
 
-COPY build/bin/couchbase-audit-cleanup /usr/local/bin/couchbase-audit-cleanup
-RUN chmod a+x /usr/local/bin/couchbase-audit-cleanup
+COPY bin/couchbase-audit-cleanup /usr/local/bin/couchbase-audit-cleanup
 
 RUN useradd -u 8453 -m -s /bin/false couchbase
 USER 8453

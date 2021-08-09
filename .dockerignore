@@ -2,7 +2,7 @@
 *
 # Include relevant documentation
 !README.md
-!licenses/
+!LICENSE
 # Now add what we need to make and run the container
 !bin/
 !non-root.passwd

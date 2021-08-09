@@ -22,13 +22,9 @@ linters:
   - exportloopref
   disable:
   - golint # replaced with revive in 1.40
-#   - interfacer
-#   - maligned
-#   - scopelint
-#   - gofumpt # as per operator
-#   - lll # long lines as per operator
-#   - gochecknoglobals # global variables as per operator (and for logging)
-# linters-settings:
-#   cyclop:
-#     # the maximal code complexity to report
-#     max-complexity: 11
+  - interfacer # deprecated
+  - maligned # replaced with govet 'fieldalignment'
+  - scopelint # replaced with exportloopref
+  - gofumpt # as per operator
+  - lll # long lines as per operator
+  - gochecknoglobals # global variables as per operator (and for logging)
