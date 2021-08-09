@@ -1,0 +1,9 @@
+mode: image
+image: iamge-rhel.tar
+verbose: true
+# veryverbose: true
+files:
+  # Apache 2.0
+  - name: '/licenses/couchbase.txt'
+    hashes:
+      - hash: '0cec06e0e55fbc3dc5cee4fca9b607f66cb8f4e4dbcf3b3c013594dd156732e9'

@@ -1,0 +1,8 @@
+# Ignore everything by default then explicitly allow
+*
+# Include relevant documentation
+!README.md
+!licenses/
+# Now add what we need to make and run the container
+!bin/
+!non-root.passwd
