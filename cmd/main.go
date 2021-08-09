@@ -28,6 +28,9 @@ var (
 	log = logging.Log
 )
 
+// Create a filesystem watcher that removes rotated audit logs as soon as they are created.
+// Event-driven rather than polling.
+
 func main() {
 	ignoreExisting := flag.Bool("ignoreExisting", true, "Ignore any existing rebalance reports, if false will process then exit")
 	flag.Parse()
